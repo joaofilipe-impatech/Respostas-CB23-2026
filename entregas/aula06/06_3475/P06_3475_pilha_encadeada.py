@@ -73,6 +73,6 @@ class PilhaEncadeada:
         elementos = []
         proximo_no = self._topo
         while proximo_no is not None:
-            elementos.append(proximo_no.valor)
+            elementos.append(str(proximo_no.valor))
             proximo_no = proximo_no.ponteiro
         return " -> ".join(elementos)
