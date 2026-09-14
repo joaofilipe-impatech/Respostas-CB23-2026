@@ -15,7 +15,7 @@ class PilhaEncadeada:
         - `item`: valor a ser guardado na pilha.
 
         *Complexidade:* O(1), pois a criação de um nó, a atribuição de variável e o incremento não mudam
-        com o tamanho da pilha
+        com o tamanho da pilha, ou seja, cada um deles é O(1), pelo que a soma final também é O(1).
         """
         novo_no = self._No(item, self._topo)
         self._topo = novo_no
@@ -27,7 +27,7 @@ class PilhaEncadeada:
         Caso não haja elementos na pilha, levanta um IndexError.
 
         *Complexidade:* O(1), pois o condicional, a atribuição de variável e o incremento não mudam com o
-        tamanho da pilha
+        tamanho da pilha, ou seja, cada um deles é O(1), pelo que a soma final também é O(1).
         """
         if len(self) == 0:
             raise IndexError("A pilha está vazia!")
@@ -41,7 +41,7 @@ class PilhaEncadeada:
         Retorna o item no topo da pilha, sem remover.
         Caso não haja elementos na pilha, levanta um IndexError.
 
-        *Complexidade:* O(1), pois a condicional não muda com o tamanho da pilha
+        *Complexidade:* O(1), pois a condicional não muda com o tamanho da pilha, ou seja, é O(1).
         """
         if len(self) == 0:
             raise IndexError("A pilha está vazia!")
@@ -49,25 +49,26 @@ class PilhaEncadeada:
 
     def esta_vazia(self):
         """
-        Retorna um booleano indicando se a pilha está vazia
+        Retorna um booleano indicando se a pilha está vazia.
 
-        *Complexidade:* O(1), pois a comparação não muda com o tamanho da pilha
+        *Complexidade:* O(1), pois a comparação não muda com o tamanho da pilha, ou seja, é O(1).
         """
         return len(self) == 0
 
     def __len__(self):
         """
-        Retorna o tamanho da pilha
+        Retorna o tamanho da pilha.
 
-        *Complexidade:* O(1), pois o acesso à memória não muda com o tamanho da pilha
+        *Complexidade:* O(1), pois o acesso à memória não muda com o tamanho da pilha, ou seja, é O(1).
         """
         return self._tamanho
 
     def __repr__(self):
         """
-        Retorna uma representação visual da pilha na forma 'topo -> ... -> base'
+        Retorna uma representação visual da pilha na forma 'topo -> ... -> base'.
 
-        *Complexidade:* O(n), pois a iteração sobre os elementos cresce linearmente com o tamanho da pilha
+        *Complexidade:* O(n), pois a iteração sobre os elementos cresce linearmente com o tamanho da pilha,
+        mas cada operação dentro da iteração é O(1).
         """
         elementos = []
         proximo_no = self._topo
