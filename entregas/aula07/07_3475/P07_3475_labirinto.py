@@ -157,7 +157,7 @@ def solve_maze(maze):
         
 # Example usage:
 if __name__ == '__main__':
-    m, n = 10, 14  # Grid size
+    m, n = 30, 20  # Grid size
     # random.seed(3)
     room = '  '
     wall = '\u2588\u2588'
