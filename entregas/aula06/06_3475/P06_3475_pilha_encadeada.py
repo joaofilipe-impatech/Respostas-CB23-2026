@@ -45,7 +45,7 @@ class PilhaEncadeada:
         """
         if len(self) == 0:
             raise IndexError("A pilha está vazia!")
-        return self._topo
+        return self._topo.valor
 
     def esta_vazia(self):
         """
