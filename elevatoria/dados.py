@@ -76,6 +76,30 @@ def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
       (`contagens=1623` vira `1623.0`; `evento=partida` continua `"partida"`);
     - texto vazio devolve `([], [])`.
     """
+    registros = []
+    invalidas = []
+    for linha in texto.split("\n"):
+        linha = LINHA.fullmatch(linha)
+        if linha:
+            try:
+                instante = datetime.strptime(f"{linha.group("data")} {linha.group("hora"), "%Y-%m-%d %H:%M:%S"}")
+                nivel = linha.group("nivel")
+                tag = linha.group("tag")
+                valores = dict()
+                for par in linha.group('resto'):
+                    chave, valor = re.fullmatch("(\\w+)=(\\S+)", par)
+                    try:
+                        valor = float(valor)
+                    except ValueError:
+                        pass
+                    valores[chave] = valor
+                registros.append(Registro(instante, nivel, tag))
+                continue
+            except ValueError:
+                pass
+        invalidas.append(linha)
+
+    return (registros, invalidas)
 
 
 def por_tag(registros: list[Registro], tag: str) -> list[Registro]:
