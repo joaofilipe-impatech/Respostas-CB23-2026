@@ -29,7 +29,14 @@ from fornecido.cronometro import cronometrar
 #: dígitos) e `resto` (o restante da linha, começando por um caractere que não é espaço).
 #: As partes são separadas por um ou mais espaços. A linha inteira deve casar: o padrão é
 #: aplicado com `LINHA.fullmatch(linha)`.
-LINHA: re.Pattern = None  # type: ignore[assignment]  # TODO issue #1
+LINHA: re.Pattern = re.compile(r"""
+    ^
+    (?P<data>\d{4}-\d{2}-\d{2}) \s  # `data`
+    (?P<hora>\d{2}-\d{2}-\d{2}) \s  # `hora`
+    (?P<tag>[A-Z]{1,2}\d{1,3}) \s   # `tag`
+    (?P<resto>[^\s])                # `resto`
+    $
+""", re.VERBOSE)  # type: ignore[assignment]  # TODO issue #1
 
 
 @dataclass(frozen=True)
@@ -69,7 +76,6 @@ def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
       (`contagens=1623` vira `1623.0`; `evento=partida` continua `"partida"`);
     - texto vazio devolve `([], [])`.
     """
-    raise NotImplementedError("issue #1: ler_log")
 
 
 def por_tag(registros: list[Registro], tag: str) -> list[Registro]:
