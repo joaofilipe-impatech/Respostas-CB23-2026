@@ -19,6 +19,8 @@ import numpy as np
 from elevatoria.serie import SerieTemporal
 from fornecido.cronometro import cronometrar
 
+from collections import Counter
+
 # ---------------------------------------------------------------------------------------
 # Issue #1: leitor do log
 # ---------------------------------------------------------------------------------------
@@ -116,7 +118,8 @@ def contagem_por_tag(registros: list[Registro]) -> dict[str, int]:
     Use uma compreensão de dicionário sobre o conjunto das tags, obtido por uma compreensão
     de conjunto. Lista vazia devolve `{}`.
     """
-    raise NotImplementedError("issue #1: contagem_por_tag")
+    return Counter(reg.tag for reg in registros)
+    # raise NotImplementedError("issue #1: contagem_por_tag")
 
 
 def serie(registros: list[Registro], tag: str, chave: str) -> SerieTemporal:
@@ -125,6 +128,9 @@ def serie(registros: list[Registro], tag: str, chave: str) -> SerieTemporal:
     Os registros da tag sem essa chave (por exemplo, os alarmes de PT102, que não têm
     `contagens`) são ignorados. Crie a série com `SerieTemporal.de_lista`.
     """
+    registros_filtrado = por_tag(registros, tag)
+    valores = [reg.valores[chave] for reg in registros_filtrado]
+    
     raise NotImplementedError("issue #1: serie")
 
 
