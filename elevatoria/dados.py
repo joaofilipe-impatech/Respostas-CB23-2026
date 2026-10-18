@@ -31,13 +31,13 @@ from fornecido.cronometro import cronometrar
 #: aplicado com `LINHA.fullmatch(linha)`.
 LINHA: re.Pattern = re.compile(r"""
     ^
-    (?P<data>\d{4}-\d{2}-\d{2}) \s  # `data`
-    (?P<hora>\d{2}-\d{2}-\d{2}) \s  # `hora`
-    (?P<tag>[A-Z]{1,2}\d{1,3}) \s   # `tag`
-    (?P<resto>[^\s])                # `resto`
+    (?P<data>\d{4}-\d{2}-\d{2}) \s+ # `data`
+    (?P<hora>\d{2}:\d{2}:\d{2}) \s+ # `hora`
+    (?P<nivel>INFO|WARN|ALARME) \s+ # `nivel`
+    (?P<tag>[A-Z]{1,2}\d{1,3})  \s+ # `tag`
+    (?P<resto>[^\s].*)              # `resto`
     $
-""", re.VERBOSE)  # type: ignore[assignment]  # TODO issue #1
-
+""", re.VERBOSE)
 
 @dataclass(frozen=True)
 class Registro:
@@ -55,7 +55,7 @@ def valida_tag(s: str) -> bool:
     Use `fullmatch`. Válidas: `"PT101"`, `"FT201"`, `"B1"`. Inválidas: `"pt101"`, `"PT"`,
     `"PT1010"`, `"101PT"` e `"PT101 "` (sobra de caracteres).
     """
-    raise NotImplementedError("issue #1: valida_tag")
+    return re.fullmatch("[A-Z]{1,2}\d{1,3}", s)
 
 
 def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
@@ -78,26 +78,29 @@ def ler_log(texto: str) -> tuple[list[Registro], list[str]]:
     """
     registros = []
     invalidas = []
-    for linha in texto.split("\n"):
-        linha = LINHA.fullmatch(linha)
+    for linha_bruta in texto.split("\n"):
+        if linha_bruta.strip() == '':
+            continue
+        linha = LINHA.fullmatch(linha_bruta)
         if linha:
             try:
-                instante = datetime.strptime(f"{linha.group("data")} {linha.group("hora"), "%Y-%m-%d %H:%M:%S"}")
+                instante = datetime.strptime(f"{linha.group("data")} {linha.group("hora")}", "%Y-%m-%d %H:%M:%S")
                 nivel = linha.group("nivel")
                 tag = linha.group("tag")
                 valores = dict()
-                for par in linha.group('resto'):
-                    chave, valor = re.fullmatch("(\\w+)=(\\S+)", par)
+                for par in linha.group('resto').split():
+                    _temp = re.fullmatch(r"(\w+)=(\S+)", par)
+                    chave, valor = _temp[1], _temp[2]
                     try:
                         valor = float(valor)
                     except ValueError:
                         pass
                     valores[chave] = valor
-                registros.append(Registro(instante, nivel, tag))
+                registros.append(Registro(instante, nivel, tag, valores))
                 continue
             except ValueError:
                 pass
-        invalidas.append(linha)
+        invalidas.append(linha_bruta)
 
     return (registros, invalidas)
 
