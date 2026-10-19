@@ -129,9 +129,10 @@ def serie(registros: list[Registro], tag: str, chave: str) -> SerieTemporal:
     `contagens`) são ignorados. Crie a série com `SerieTemporal.de_lista`.
     """
     registros_filtrado = por_tag(registros, tag)
-    valores = [reg.valores[chave] for reg in registros_filtrado]
+    valores = [reg.valores[chave] for reg in registros_filtrado if chave in reg.valores]
+    return SerieTemporal.de_lista(valores)
     
-    raise NotImplementedError("issue #1: serie")
+    # raise NotImplementedError("issue #1: serie")
 
 
 # ---------------------------------------------------------------------------------------
