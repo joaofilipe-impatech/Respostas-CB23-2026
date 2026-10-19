@@ -9,7 +9,6 @@ enfraqueça nenhum assert. O script usa apenas a interface pública dos módulos
 import math
 import re
 import sys
-from collections import Counter
 
 import numpy as np
 
@@ -46,7 +45,8 @@ def etapa1(texto: str, verdade: dict) -> list:
     print(f"Válidas: {len(registros)} | Inválidas: {len(invalidas)}")
 
     # (b) Conte os registros por nível com uma compreensão de dicionário.
-    por_nivel = Counter(reg.nivel for reg in registros)
+    niveis_set = set(reg.nivel for reg in registros)
+    por_nivel = {n: sum([reg.nivel == n for reg in registros]) for n in niveis_set}
     assert por_nivel == verdade["por_nivel"]
 
     # (c) Some os pulsos de FT201 (com `serie`) e imprima o volume bombeado na hora (0,1 L/pulso).
@@ -66,25 +66,26 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
     """Etapa 2 — Lambda e compreensões (issue #2)."""
     print("\n=== Etapa 2: lambda e compreensões ===")
     # (a) Ordene com sorted e key=lambda: (i) por (tag, instante); (ii) por instante decrescente.
-    por_tag_instante = _todo("2(a)(i)")
-    decrescente = _todo("2(a)(ii)")
+    por_tag_instante = sorted(registros, key=lambda x: (x.tag, x.instante))
+    decrescente = sorted(registros, key=lambda x: x.instante, reverse=True)
     assert por_tag_instante[0].tag == "B1"
     assert decrescente[0].instante == max(r.instante for r in registros)
 
     # (b) Contagens de PT102 (só registros com a chave "contagens"): map/filter e compreensão.
-    com_map = _todo("2(b) map/filter")
-    com_compreensao = _todo("2(b) compreensão")
+    filtrados = filter(lambda x : x.tag == "PT102" and "contagens" in x.valores, registros)
+    com_map = list(map(lambda x : x.valores["contagens"], filtrados))
+    com_compreensao = [reg.valores["contagens"] for reg in registros if reg.tag == "PT102" and "contagens" in reg.valores]
     assert com_map == com_compreensao and len(com_compreensao) == 600
 
     # (c) Contagens acima de 2000 (compreensão de lista) e tags distintas (de conjunto).
-    altas = _todo("2(c) altas")
-    tags = _todo("2(c) tags")
+    altas = [reg.valores["contagens"] for reg in registros if "contagens" in reg.valores and reg.valores["contagens"] > 2000]
+    tags = set(reg.tag for reg in registros)
     assert len(altas) == 5
     assert tags == {"B1", "PT101", "PT102", "FT201", "LT301"}
 
     # (d) Com re.sub e uma lambda como repl, troque pulsos=N por volume_L=V (V = N * 0,1,
     #     com uma casa decimal; por exemplo, pulsos=3892 vira volume_L=389.2).
-    convertido = _todo("2(d)")
+    convertido = re.sub(r"(pulsos)=(\d+)", lambda x: f"volume_L={x[2]}", texto)
     assert convertido.count("volume_L=") == 600 and "pulsos=" not in convertido
 
     # (e) Late binding: a versão errada (não corrija esta linha) e a sua.
@@ -96,8 +97,9 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
 
     # (f) Converta a média das contagens normais de PT102 (até 2000) com a escala nominal
     #     (certos["PT102"]) e imprima ao lado de verdade["pressao_recalque"].
-    p_nominal = _todo("2(f)")
+    p_nominal = np.average(list(map(lambda x : certos["PT102"](x), com_map)))
     assert abs(p_nominal - verdade["pressao_recalque"]) > 100
+    print(f"Média nominal das contagens: {p_nominal} | pressao_recalque: {verdade["pressao_recalque"]}")
 
 
 def etapa3() -> None:
