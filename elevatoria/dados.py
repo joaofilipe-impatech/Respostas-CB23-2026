@@ -19,8 +19,6 @@ import numpy as np
 from elevatoria.serie import SerieTemporal
 from fornecido.cronometro import cronometrar
 
-from collections import Counter
-
 # ---------------------------------------------------------------------------------------
 # Issue #1: leitor do log
 # ---------------------------------------------------------------------------------------
@@ -118,7 +116,9 @@ def contagem_por_tag(registros: list[Registro]) -> dict[str, int]:
     Use uma compreensão de dicionário sobre o conjunto das tags, obtido por uma compreensão
     de conjunto. Lista vazia devolve `{}`.
     """
-    return Counter(reg.tag for reg in registros)
+    conjunto_tags = {r.tag for r in registros}
+    dict_tag = {tag:sum([r.tag == tag for r in registros]) for tag in conjunto_tags}
+    return dict_tag
     # raise NotImplementedError("issue #1: contagem_por_tag")
 
 
@@ -144,7 +144,9 @@ def criar_conversores(escalas: dict[str, float]) -> dict[str, Callable[[float], 
     Cada `f` é uma lambda. Cuidado com o *late binding*: cada função deve usar o fator da
     sua tag, e não o último fator do dicionário (veja a issue #2 no enunciado).
     """
-    raise NotImplementedError("issue #2: criar_conversores")
+    def f(c, fator):
+        return c * fator
+    result = map()
 
 
 # ---------------------------------------------------------------------------------------

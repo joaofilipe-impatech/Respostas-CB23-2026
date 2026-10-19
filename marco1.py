@@ -9,6 +9,7 @@ enfraqueça nenhum assert. O script usa apenas a interface pública dos módulos
 import math
 import re
 import sys
+from collections import Counter
 
 import numpy as np
 
@@ -17,7 +18,7 @@ from fornecido.simulador import gerar_log
 from elevatoria.dados import (contagem_por_tag, criar_conversores, ler_log, medir_memoria,
                               medir_tempos, serie, valida_tag)
 
-MATRICULA = 123456  # troque pelo seu número de matrícula
+MATRICULA = 3475  # troque pelo seu número de matrícula
 
 
 def _todo(item: str):
@@ -42,14 +43,16 @@ def etapa1(texto: str, verdade: dict) -> list:
     assert len(invalidas) == verdade["invalidas"]
     assert len(registros) + len(invalidas) == verdade["linhas"]
     assert contagem_por_tag(registros) == verdade["registros_por_tag"]
+    print(f"Válidas: {len(registros)} | Inválidas: {len(invalidas)}")
 
     # (b) Conte os registros por nível com uma compreensão de dicionário.
-    por_nivel = _todo("1(b)")
+    por_nivel = Counter(reg.nivel for reg in registros)
     assert por_nivel == verdade["por_nivel"]
 
     # (c) Some os pulsos de FT201 (com `serie`) e imprima o volume bombeado na hora (0,1 L/pulso).
-    total = _todo("1(c)")
+    total = np.sum(serie(registros, 'FT201', 'pulsos'))
     assert total == verdade["pulsos_total"]
+    print(f"Volume bombeado: {total/10} L")
 
     # (d) valida_tag.
     for tag in ["PT101", "FT201", "B1"]:
