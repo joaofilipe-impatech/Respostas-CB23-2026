@@ -100,8 +100,6 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
     p_nominal = np.average(list(map(lambda x : certos["PT102"](x), com_map)))
     assert abs(p_nominal - verdade["pressao_recalque"]) > 100
     print(f"Média das contagens: {p_nominal} | pressao_recalque: {verdade["pressao_recalque"]}")
-    a = np.average(list(map(lambda x : p_real(x), com_map)))
-    print(a)
 
 
 def etapa3() -> None:
