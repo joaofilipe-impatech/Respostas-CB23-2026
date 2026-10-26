@@ -13,7 +13,7 @@ import sys
 import numpy as np
 
 import fornecido
-from fornecido.simulador import gerar_log
+from fornecido.simulador import gerar_log, p_real
 from elevatoria.dados import (contagem_por_tag, criar_conversores, ler_log, medir_memoria,
                               medir_tempos, serie, valida_tag)
 
@@ -99,7 +99,9 @@ def etapa2(texto: str, registros: list, verdade: dict) -> None:
     #     (certos["PT102"]) e imprima ao lado de verdade["pressao_recalque"].
     p_nominal = np.average(list(map(lambda x : certos["PT102"](x), com_map)))
     assert abs(p_nominal - verdade["pressao_recalque"]) > 100
-    print(f"Média nominal das contagens: {p_nominal} | pressao_recalque: {verdade["pressao_recalque"]}")
+    print(f"Média das contagens: {p_nominal} | pressao_recalque: {verdade["pressao_recalque"]}")
+    a = np.average(list(map(lambda x : p_real(x), com_map)))
+    print(a)
 
 
 def etapa3() -> None:
