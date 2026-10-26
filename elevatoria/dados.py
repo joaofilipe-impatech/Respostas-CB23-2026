@@ -231,7 +231,7 @@ def medir_tempos(contagens: np.ndarray, k: int = 10) -> dict[str, float]:
 
     result["laço"] = cronometrar(converter_laco, contagens_lista, k=k)
     result["compreensão"] = cronometrar(converter_compreensao, contagens_lista, k=k)
-    result["map+lambda"] = cronometrar(converter_laco, contagens_lista, k=k)
+    result["map+lambda"] = cronometrar(converter_map, contagens_lista, k=k)
     result["vetorizado"] = cronometrar(converter_vetorizado, contagens, k=k)
 
     return result
