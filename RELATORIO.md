@@ -34,15 +34,16 @@ O código no `simulador.py` trabalha utilizando conversões trigonométricas `p_
 
 ### R5 — Previsão × medição (Etapa 3)
 
-Previsões registradas no commit: <!-- cole o hash curto do commit de previsões -->
+Previsões registradas no commit: d8bc5f0 <!-- cole o hash curto do commit de previsões -->
 
 | Grandeza | Previsão | Medido |
 | --- | --- | --- |
-| Memória da lista / memória do `uint16` | $36000056 / 2000000 \approx 18$ | |
-| Tempo do laço / tempo vetorizado | $50$ | |
-| Tempo da compreensão / tempo do laço | $1$ | |
+| Memória da lista / memória do `uint16` | $36000056 / 2000000 \approx 18$ | $18,0$ |
+| Tempo do laço / tempo vetorizado | $50$ | $29,0$ |
+| Tempo da compreensão / tempo do laço | $1$ | $1,1$ |
 
 <!-- Explique a maior diferença entre previsão e medição; por que uint16 * 20 dá 16364; que dtype você escolheria para contagens e para kPa. -->
+`uint16 * 20` ou, mais especificamente, `uint16(4095) * 20` dá 16364 devido ao overflow: o resultado correto é 81900, mas como o `uint16` só vai até $2^{16}-1=65535$, o resultado final obtido é $81900-2^16=16364$. Para contagens, que não passam de 4096, `uint16` é o mínimo suficiente, garantindo eficiência no uso de memória. Para kPa, `float64` garante a máxima precisão.
 
 ### R6 — Tipos da SerieTemporal (Etapa 4d)
 
